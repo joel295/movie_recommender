@@ -120,19 +120,19 @@ class recommender:
         return imgURL
 
     def create_imageURL_csv(self):
-        #with open("data/imgURLs.csv", 'w') as f:
-        #for index, row in self.linksDF.iterrows():
-        #    movieID = str(row['Movie_ID'])
-        #    movieDBID = row['MovieDB']
-        #    print(movieDBID)
-
-            # URL = self.get_image_URL(movieDBID)
-            # if URL == None:
-            #     line = movieID + ',' + "missing" + '\n'
-            # else:
-            #     line = movieID + ',' + URL + '\n'
-            # print(line)
-                # f.write(line)
+        with open("data/imgURLs.csv", 'w') as f:
+            for row in self.linksDF.itertuples():
+                movie_id = str(row[1])
+                movieDB = str(int(row[3]))
+                if movieDB == None:
+                    return
+                URL = self.get_image_URL(movieDB)
+                if URL == None:
+                    line = movie_id + ',' + "missing" + '\n'
+                else:
+                    line = movie_id + ',' + URL + '\n'
+                print(line)
+                f.write(line)
         return
 
     ## curation to training and test set here
@@ -143,9 +143,10 @@ if __name__ == '__main__':
     recommender.populate_user_ratings("data/ratings.csv")
     recommender.populate_movie_names("data/movies.csv")
     recommender.populate_links("data/links.csv")
-    recommender.initialise()
-    recommender.data_processing(0.1)
-    recommender.calc_similarity()
+    #recommender.initialise()
+    #recommender.data_processing(0.1)
+    #recommender.calc_similarity()
     #recommender.prediction_using_all_users()
-    recommender.prediction_using_finite_nearest_neighbours(50)
+    #recommender.prediction_using_finite_nearest_neighbours(50)
+    recommender.create_imageURL_csv()
     print("Finished")
