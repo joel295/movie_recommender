@@ -61,15 +61,18 @@ Add additional notes about how to deploy this on a live system
 * [python3](http://example.com) - what?
 * [sklearn](http://example.com) - what?
 * [flask](http://example.com) - what?
+* [numpy](http://example.com) - what?
+* [pandas](http://example.com) - what?
+
 
 ## Authors
 
 * **Joel Lawrence** - [joel295](https://github.com/joel295)
-* **Deepansh Sign** - [dp](https://github.com/unknown)
+* **Deepansh Singh** - [deepanshsingh8](https://github.com/deepanshsingh8)
 
 ## License
 
-This project is licensed under the GPL-3.9 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
