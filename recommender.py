@@ -19,16 +19,20 @@ class recommender:
         self.ratings_names = ['User_ID', 'Movie_ID', 'Rating', 'Time_Stamp']
         self.movies_names = ['Movie_ID', 'Title', 'Genres']
         self.link_names = ['Movie_ID', 'IMDB', 'MovieDB']
+        self.url_names = ['Movie_ID', 'URL']
         return
     
     def populate_user_ratings(self, filePath):
         self.ratingsDF = pd.read_csv(filePath, skiprows=1, sep=',', names=self.ratings_names)
         self.num_users = max(self.ratingsDF.User_ID)
         self.num_movies = max(self.ratingsDF.Movie_ID)
-        print("Users in total: %d\nMovies in total: %d" % (self.num_users, self.num_movies))
+        #print("Users in total: %d\nMovies in total: %d" % (self.num_users, self.num_movies))
     
     def populate_movie_names(self, filePath):
         self.moviesDF = pd.read_csv(filePath, skiprows=1, sep=',', names=self.movies_names)
+    
+    def populate_movie_url_images(self, filePath):
+        self.imgURLsDF = pd.read_csv(filePath, skiprows=1, sep=',', names=self.url_names)
     
     def populate_links(self, filePath):
         self.linksDF = pd.read_csv(filePath, skiprows=1, sep=',', names=self.link_names)
@@ -163,16 +167,15 @@ class recommender:
                     print("100 down")
         return
 
-
-if __name__ == '__main__':
-    recommender = recommender()
-    recommender.populate_user_ratings("data/ratings.csv")
-    recommender.populate_movie_names("data/movies.csv")
-    recommender.populate_links("data/links.csv")
+#if __name__ == '__main__':
+    #recommender = recommender()
+    #recommender.populate_user_ratings("data/ratings.csv")
+    #recommender.populate_movie_names("data/movies.csv")
+    #recommender.populate_links("data/links.csv")
     #recommender.initialise()
     #recommender.data_processing(0.1)
     #recommender.calc_similarity()
     #recommender.prediction_using_all_users()
     #recommender.prediction_using_finite_nearest_neighbours(50)
     #recommender.create_imageURL_csv()
-    print("Finished")
+    #print("Finished")

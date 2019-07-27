@@ -3,38 +3,38 @@
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
-<div class="col-lg-6">
-    <p class="lead"><br>Choose a user and then select a movie!<br>
-    <br>
-    If the user has seen the movie, you will see their selected rating.<br>
-    Otherwise you will see the predicted rating indicating whether they
-    will enjoy the movie or not.</p>
-</div>
-<div class="col-lg-6 text-center">
-    <div class="form-group">
-        <div class="row form-group">
-            <label for="user">Select User</label>
-            <select class="form-control" id="user">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-        </div>
-        <div class="row form-group">
-            <label for="movie">Select Movie</label>
-            <select class="form-control" id="movie">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-        </div>
-        <div class="row float-right">
-            <button type="button" class="btn btn-outline-primary">Predict</button>
-        </div>
+<div class="row">
+    <div class="col-lg-6">
+        <p class="lead"><br>Choose a user and then select a movie!<br>
+        <br>
+        If the user has seen the movie, you will see their selected rating.<br>
+        Otherwise you will see the predicted rating indicating whether they
+        will enjoy the movie or not.</p>
+    </div>
+    <div class="col-lg-6 text-center">
+        <form action="/" method="post">
+            <div class="form-group">
+                <div class="row form-group">
+                    <label for="user">Select User</label>
+                    <select class="form-control" id="user" required name="user" placeholder="user">
+                        {% for user in users %}
+                        <option value={{ user }}>{{ user }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row form-group">
+                    <label for="movie">Select Movie</label>
+                    <select class="form-control" id="movie" required name="movie" placeholder="movie">
+                        {% for (movie_id, movie) in movies %}
+                        <option value={{ movie_id }}>{{ movie }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row float-right form-group">
+                    <button type="submit" class="btn btn-outline-primary">Predict</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

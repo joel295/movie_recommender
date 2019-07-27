@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Result{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <p></p>
+    </div>
+    <div class="col-lg-4">
+        <img src="{{ url }}" class="img-fluid rounded">
+    </div>
+    <div class="col-lg-6 text-center">
+            <h4>Ratings Result</h4>        
+            <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">User</th>
+                        <th scope="col">Movie</th>
+                        <th scope="col">Rating /5</th>
+                        <th scope="col">Actual or Predicted?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">{{ user }}</th>
+                        <td>{{ movie }}</td>
+                        <td>X</td>
+                        <td>Predicted</td>
+                      </tr>
+            </table>      
+    </div>
+</div>
+{% endblock %}
