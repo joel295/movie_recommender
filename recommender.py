@@ -173,5 +173,4 @@ if __name__ == '__main__':
     #recommender.prediction_using_all_users()
     #recommender.prediction_using_finite_nearest_neighbours(50)
     #recommender.create_imageURL_csv()
-    print(recommender.linksDF)
     print("Finished")
