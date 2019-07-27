@@ -78,6 +78,7 @@ class recommender:
         # calculate mean squared error of results
         error = mse(self.predicted_values_all, true_values)
         print('The mean squared error of user_based CF is: ' + str(error))
+        return error
 
     def prediction_using_finite_nearest_neighbours(self, num_neighbours):
         prediction_matrix = np.zeros(self.testing_set.shape)
@@ -104,6 +105,7 @@ class recommender:
         error = mse(predicted_values, true_values)
 
         print('The mean squared error of top-' + str(num_neighbours) + ' user_based CF is: ' + str(error) + '\n')
+        return error
     
     def rating_recommender(self, user, num_neighbours): #top50
         similarity_matrix = cos_sim(self.ratings_matrix)
