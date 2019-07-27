@@ -4,6 +4,9 @@
 # Written by Joel Lawrence (3331029) and Deepansh Singh ()
 # Last modified, July '19
 
+
+## NEEDS MORE COMMENTS BEFORE SUBMISSION
+
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity as cos_sim
@@ -29,6 +32,8 @@ class recommender:
     
     def populate_links(self, filePath):
         self.linksDF = pd.read_csv(filePath, skiprows=1, sep=',', names=self.link_names)
+        self.linksDF.dropna(inplace=True)
+        self.linksDF.MovieDB = self.linksDF.MovieDB.astype(int)
 
     def initialise(self):
         self.ratings_matrix = np.zeros((self.num_users, self.num_movies))
@@ -99,6 +104,23 @@ class recommender:
         error = mse(predicted_values, true_values)
 
         print('The mean squared error of top-' + str(num_neighbours) + ' user_based CF is: ' + str(error) + '\n')
+    
+    def rating_recommender(self, user, num_neighbours): #top50
+        similarity_matrix = cos_sim(self.ratings_matrix)
+        prediction_matrix = np.zeros(self.ratings_matrix.shape)
+        index_top50 = [np.argsort(similarity_matrix[:,user])[-2:-50-2:-1]]
+        for item in range(self.rating_matrix.shape[1]):
+            if self.rating_matrix[user][item] == 0:
+                # Denominator is the sum of similarity for each user with its top 50 users:
+                denom = np.sum(similarity_matrix[user,:][index_top50])
+                
+                # Numerator
+                numer = similarity_matrix[user,:][index_top50].dot(self.rating_matrix[:,item][index_top50])
+                
+                prediction_matrix[user, item] = numer/denom
+                    
+        movie_ids = [i for i in np.argsort(prediction_matrix[user, :])[-50:]]
+        return movie_ids
 
 
     # function to get the URL of a movie poster using MovieDB id
@@ -120,6 +142,7 @@ class recommender:
         return imgURL
 
     def create_imageURL_csv(self):
+        counter = 0
         with open("data/imgURLs.csv", 'w') as f:
             for row in self.linksDF.itertuples():
                 movie_id = str(row[1])
@@ -133,9 +156,10 @@ class recommender:
                     line = movie_id + ',' + URL + '\n'
                 print(line)
                 f.write(line)
+                counter += 1
+                if (counter % 100 == 0):
+                    print("100 down")
         return
-
-    ## curation to training and test set here
 
 
 if __name__ == '__main__':
@@ -149,4 +173,5 @@ if __name__ == '__main__':
     #recommender.prediction_using_all_users()
     #recommender.prediction_using_finite_nearest_neighbours(50)
     #recommender.create_imageURL_csv()
+    print(recommender.linksDF)
     print("Finished")
