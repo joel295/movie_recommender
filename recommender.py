@@ -125,7 +125,7 @@ class recommender:
                 movie_id = str(row[1])
                 movieDB = str(int(row[3]))
                 if movieDB == None:
-                    return
+                    continue
                 URL = self.get_image_URL(movieDB)
                 if URL == None:
                     line = movie_id + ',' + "missing" + '\n'
@@ -148,5 +148,5 @@ if __name__ == '__main__':
     #recommender.calc_similarity()
     #recommender.prediction_using_all_users()
     #recommender.prediction_using_finite_nearest_neighbours(50)
-    recommender.create_imageURL_csv()
+    #recommender.create_imageURL_csv()
     print("Finished")
