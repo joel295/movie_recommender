@@ -1,7 +1,7 @@
 # Movie Recommender System
 # Topic ####
 # COMP9417 - Project
-# Written by Joel Lawrence (3331029) and Deepansh Singh ()
+# Written by Joel Lawrence (3331029) and Deepansh Singh (z5199370)
 # Last modified, July '19
 
 
