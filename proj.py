@@ -179,7 +179,26 @@ class Learner:
             else:
                 print("%2d: User %2d, with similarity of %3.5f"%(i, index.flatten()[i]+1, similar.flatten()[i]))
         return similar,index
-
+    
+    
+    def predict_user_rating(self,user_id, item_id, ratings, metric, k=4):
+        prediction=0
+        similar, index=self.findksimilarusers(user_id, ratings,metric, k) #similar users based on cosine similarity
+        mean_rating = ratings.loc[user_id-1,:].mean() #to adjust for zero based indexing
+        sum_wt = np.sum(similar)-1
+        product=1
+        wtd_sum = 0 
+        for i in range(0, len(index.flatten())):
+            if index.flatten()[i]+1 == user_id:
+                continue
+            else: 
+                ratings_diff = ratings.iloc[index.flatten()[i],item_id-1]-np.mean(ratings.iloc[index.flatten()[i],:])
+                product = ratings_diff * (similar[i])
+                wtd_sum = wtd_sum + product
+        
+        prediction = int(round(mean_rating + (wtd_sum/sum_wt)))
+        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,item_id,prediction))
+        return prediction
             
 if __name__ == '__main__':
     learner = Learner("knn")
@@ -190,5 +209,8 @@ if __name__ == '__main__':
     #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)
     #print(rating_matrix)
-    similarities,indices = learner.findksimilarusers(2,rating_matrix, metric='cosine') #use correlation insteaf of cosine
-
+    user_id = int(input("Enter the user id: "))
+    #similar,index = learner.findksimilarusers(user_id,rating_matrix, metric='cosine') #use correlation insteaf of cosine
+    item_id = int(input("Enter the movie_id: "))
+    prediction = learner.predict_user_rating(user_id,item_id,rating_matrix, metric ='cosine')
+    
