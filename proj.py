@@ -42,18 +42,18 @@ class Learner:
     
     
     def data_processing(self):
-        rating_df = pd.read_csv('ratings.csv')
+        rating_df = pd.read_csv('data/ratings.csv')
         users = rating_df['userId'].unique()
         movies = rating_df['movieId'].unique()
         user2idx = {k: i for i, k in enumerate(users)}
         movie2idx = {k: i for i, k in enumerate(movies)}
         rating_df['userId'] = rating_df['userId'].apply(lambda x: user2idx[x])
         rating_df['movieId'] = rating_df['movieId'].apply(lambda x: movie2idx[x])
-        df = pd.read_csv('tags.csv')
+        df = pd.read_csv('data/tags.csv')
         tags = df['tag'].unique()
         tag2idx = {k: i for i,k in enumerate(tags)}
         rating_df['tag'] = df['tag'].apply(lambda x: tag2idx[x])
-        rating_df['tag'].fillna(11111,inplace=True)
+        rating_df['tag'].fillna(-1,inplace=True)
         rating_df.drop('timestamp',axis=1,inplace=True)
         #print(rating_df)
         Y = rating_df.iloc[:,-2].values
@@ -131,7 +131,7 @@ class Learner:
             self.scoring(X_train,y_train,pipe_svc)
     
     def create_similarity_matrix(self):
-        rr = pd.read_csv('ratings.csv')
+        rr = pd.read_csv('data/ratings.csv')
         #print(rr)
         #rr.describe()
         x = 610
@@ -203,8 +203,8 @@ class Learner:
 if __name__ == '__main__':
     learner = Learner("knn")
     X_train, X_test, y_train, y_test = learner.data_processing()
-    #learner.classifier(X_train, X_test, y_train, y_test )
-    #learner.pipeline_learning(X_train, X_test, y_train, y_test)
+    learner.classifier(X_train, X_test, y_train, y_test )
+    learner.pipeline_learning(X_train, X_test, y_train, y_test)
     rating_matrix,user_similarity = learner.create_similarity_matrix()
     #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)
