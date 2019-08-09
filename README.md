@@ -1,10 +1,10 @@
 # Movie Recommender System
 
-This project provides a web interface to predict whether a user is likely to enjoy a movie they have not watched
+This project provides a recommender system using Collaborative Filtering via Cosine Similarity
 
 ## Getting Started
+More info needed here
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -14,55 +14,29 @@ What things you need to install the software and how to install them
 Give examples
 ```
 
-### Installing
+### Running the code
 
 A step by step series of examples that tell you how to get a development env running
 
 Say what the step will be
 
 ```
-Give the example
+$ python3 recommender.py
 ```
 
-And repeat
+And
 
 ```
-until finished
+$ python3 proj.py
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [python3](http://example.com) - what?
-* [sklearn](http://example.com) - what?
-* [flask](http://example.com) - what?
-* [numpy](http://example.com) - what?
-* [pandas](http://example.com) - what?
+* [python3](https://www.python.org/)
+* [scikit-learn](https://scikit-learn.org/)
+* [matplotlib](https://matplotlib.org/)
+* [numpy](https://www.numpy.org/)
+* [pandas](https://pandas.pydata.org/)
 
 
 ## Authors
@@ -73,9 +47,3 @@ Add additional notes about how to deploy this on a live system
 ## License
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
