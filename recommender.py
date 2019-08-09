@@ -87,7 +87,9 @@ class recommender:
 
     def prediction_using_finite_nearest_neighbours(self, num_neighbours):
         prediction_matrix = np.zeros(self.testing_set.shape)
+        number = len(range(self.user_similarity.shape[0]))
         for user in range(self.user_similarity.shape[0]):
+            print(f'Iteration {user} of {number}.')
             # exclude the get the top num_neighbours users' indexes other than user itself        
             index_top_neighbour = [np.argsort(self.user_similarity[:,user])[-2:-num_neighbours-2:-1]]
             
@@ -162,7 +164,7 @@ class recommender:
                     print("100 down")
         return
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     recommender = recommender()
     recommender.populate_user_ratings("data/ratings.csv")
     recommender.populate_movie_names("data/movies.csv")
