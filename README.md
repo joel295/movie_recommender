@@ -10,15 +10,6 @@ The goals of this project are:
 * Prove that Collaboritive Filtering is a simple but effectice means of for recommending in a memory-based context.
 * Show that using top-K users vs overall is more accurate.
 
-
-### Prerequisites
-
-Python 3.7
-Numpy
-Pandas
-matplotlib
-Scikit-learn
-
 ### Running the code
 
 ```
@@ -31,13 +22,13 @@ And
 $ python3 proj.py
 ```
 
-## Built With
+## Built With - Prerequisites
 
-* [python3](https://www.python.org/)
-* [scikit-learn](https://scikit-learn.org/)
-* [matplotlib](https://matplotlib.org/)
-* [numpy](https://www.numpy.org/)
-* [pandas](https://pandas.pydata.org/)
+* [python3](https://www.python.org/) - v3.7
+* [scikit-learn](https://scikit-learn.org/) - v
+* [matplotlib](https://matplotlib.org/) - v
+* [numpy](https://www.numpy.org/) - v
+* [pandas](https://pandas.pydata.org/) - v
 
 
 ## Authors
