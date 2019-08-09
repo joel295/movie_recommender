@@ -12,6 +12,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity as cos_sim
 from sklearn.metrics import mean_squared_error as mse
 import math, requests, json, shutil
+import matplotlib.pyplot as plt
 
 class recommender:
     def __init__(self):
@@ -162,14 +163,26 @@ class recommender:
         return
 
 #if __name__ == '__main__':
-    #recommender = recommender()
-    #recommender.populate_user_ratings("data/ratings.csv")
-    #recommender.populate_movie_names("data/movies.csv")
-    #recommender.populate_links("data/links.csv")
-    #recommender.initialise()
-    #recommender.data_processing(0.1)
-    #recommender.calc_similarity()
-    #recommender.prediction_using_all_users()
-    #recommender.prediction_using_finite_nearest_neighbours(50)
-    #recommender.create_imageURL_csv()
-    #print("Finished")
+    recommender = recommender()
+    recommender.populate_user_ratings("data/ratings.csv")
+    recommender.populate_movie_names("data/movies.csv")
+    recommender.populate_links("data/links.csv")
+    recommender.initialise()
+    recommender.data_processing(0.1)
+    recommender.calc_similarity()
+    all_error = recommender.prediction_using_all_users()
+    sample_neighbours_numbers = [25, 30, 35, 40, 45, 50]
+    errors = []
+    for _ in sample_neighbours_numbers:
+        error = recommender.prediction_using_finite_nearest_neighbours(_)
+        errors.append(error)
+
+    sample_neighbours_numbers.append(recommender.num_users)
+    errors.append(all_error)
+    y_pos = np.arange(len(sample_neighbours_numbers))     
+    plt.bar(y_pos, errors, align='center', alpha=0.5)
+    plt.xticks(y_pos, sample_neighbours_numbers)
+    plt.ylabel('MSE')
+    plt.title('Testing MSEs with varied k values')
+    plt.savefig("output.png")
+    plt.show()
