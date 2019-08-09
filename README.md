@@ -3,22 +3,23 @@
 This project provides a recommender system using Collaborative Filtering via Cosine Similarity
 
 ## Getting Started
-More info needed here
+The goals of this project are:
+* Test various Machine Learning approaches for suitability for use as a recommender
+* Implement user derived Collaboritive Filtering to predict users’ ratings on movies using all users.
+* Improve the user derived approach using only top-K most similar user ratings.
+* Prove that Collaboritive Filtering is a simple but effectice means of for recommending in a memory-based context.
+* Show that using top-K users vs overall is more accurate.
 
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+Python 3.7
+Numpy
+Pandas
+matplotlib
+Scikit-learn
 
 ### Running the code
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
 
 ```
 $ python3 recommender.py
