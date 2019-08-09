@@ -1,68 +1,37 @@
-# Movie Recommender System
+﻿# Movie Recommender System
 
-This project provides a web interface to predict whether a user is likely to enjoy a movie they have not watched
+This project provides a recommender system using Collaborative Filtering via Cosine Similarity
 
 ## Getting Started
+The goals of this project are:
+* Test various Machine Learning approaches for suitability for use as a recommender
+* Implement user derived Collaboritive Filtering to predict users’ ratings on movies using all users.
+* Implement item derived Collaboritive Filtering to predict users’ ratings on movies using all items.
+* Predict the k most similar movies and users according to each movie and user.
+* Improve the user derived approach using only top-K most similar user ratings.
+* Prove that Collaboritive Filtering is a simple but effectice means of for recommending in a memory-based context.
+* Show that using top-K users vs overall is more accurate.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+### Running the code
 
 ```
-Give the example
+$ python3 recommender.py
 ```
 
-And repeat
+And
 
 ```
-until finished
+$ python3 proj.py
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+## Built With - Prerequisites
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [python3](http://example.com) - what?
-* [sklearn](http://example.com) - what?
-* [flask](http://example.com) - what?
-* [numpy](http://example.com) - what?
-* [pandas](http://example.com) - what?
+* [python3](https://www.python.org/) - v3.7
+* [scikit-learn](https://scikit-learn.org/) - v
+* [matplotlib](https://matplotlib.org/) - v
+* [numpy](https://www.numpy.org/) - v
+* [pandas](https://pandas.pydata.org/) - v
 
 
 ## Authors
@@ -73,9 +42,3 @@ Add additional notes about how to deploy this on a live system
 ## License
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
