@@ -12,7 +12,6 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity as cos_sim
 from sklearn.metrics import mean_squared_error as mse
 import math, requests, json, shutil
-import matplotlib.pyplot as plt
 
 class recommender:
     def __init__(self):
@@ -66,7 +65,6 @@ class recommender:
         self.user_similarity = cos_sim(self.training_set)
         print('User based similarity matrix built...')
 
-        # take into account every single using when predicting a user rating
     def prediction_using_all_users(self):
         # Denominator is the sum of similarity for each user with all other users.
         denom = np.array([np.abs(self.user_similarity).sum(axis=1)]).T
@@ -86,51 +84,42 @@ class recommender:
         print('The mean squared error of user_based CF is: ' + str(error))
         return error
 
-        # take into account a set number of neighbours when performing a prediction
     def prediction_using_finite_nearest_neighbours(self, num_neighbours):
         prediction_matrix = np.zeros(self.testing_set.shape)
-        number = len(range(self.user_similarity.shape[0]))
         for user in range(self.user_similarity.shape[0]):
             # exclude the get the top num_neighbours users' indexes other than user itself        
             index_top_neighbour = [np.argsort(self.user_similarity[:,user])[-2:-num_neighbours-2:-1]]
-            print(f'{user} of {number}.')
+            
             for item in range(self.training_set.shape[1]):
                 # Denominator is the sum of similarity for each user with its top k users:
-                denom = np.sum(self.user_similarity[user,slice(None)][index_top_neighbour])
-        
+                denom = np.sum(self.user_similarity[user,slice(None)][index_top_neighbour])        
                 # Numerator
-                numer = self.user_similarity[user,slice(None)][index_top_neighbour].dot(self.training_set[slice(None),item][index_top_neighbour])
+                numer = self.user_similarity[user,slice(None)][index_top_neighbour].dot(self.training_set[slice(None),item][index_top_neighbour])                
                 prediction_matrix[user, item] = numer/denom
-        print('Prediction based on top-' + str(num_neighbours) + ' users similarity is done...')
-        
+        print('Prediction based on top-' + str(num_neighbours) + ' users similarity is done...')        
         true_values = self.testing_set[self.testing_set.nonzero()].flatten()
-
         # get the predicted values of those which are not zero in test data set.
         predicted_values = prediction_matrix[self.testing_set.nonzero()].flatten()
-
         # 5.3 calculate MSE
         error = mse(predicted_values, true_values)
-
         print('The mean squared error of top-' + str(num_neighbours) + ' user_based CF is: ' + str(error) + '\n')
         return error
-
-        # predict a list of top number of movies for user
-        # this is based on top 50 similar users
-    def rating_recommender(self, user, number):
+    
+    def rating_recommender(self, user, num_neighbours): #top50
         similarity_matrix = cos_sim(self.ratings_matrix)
         prediction_matrix = np.zeros(self.ratings_matrix.shape)
         index_top50 = [np.argsort(similarity_matrix[:,user])[-2:-50-2:-1]]
-        for item in range(self.ratings_matrix.shape[1]):
-            if self.ratings_matrix[user][item] == 0:
+        for item in range(self.rating_matrix.shape[1]):
+            if self.rating_matrix[user][item] == 0:
                 # Denominator is the sum of similarity for each user with its top 50 users:
                 denom = np.sum(similarity_matrix[user,:][index_top50])
                 
                 # Numerator
-                numer = similarity_matrix[user,:][index_top50].dot(self.ratings_matrix[:,item][index_top50])
+                numer = similarity_matrix[user,:][index_top50].dot(self.rating_matrix[:,item][index_top50])
                 
                 prediction_matrix[user, item] = numer/denom
                     
-        movie_ids = [i for i in np.argsort(prediction_matrix[user, :])[-number:]]
+        movie_ids = [i for i in np.argsort(prediction_matrix[user, :])[-50:]]
         return movie_ids
 
 
@@ -172,31 +161,15 @@ class recommender:
                     print("100 down")
         return
 
-if __name__ == '__main__':
-    recommender = recommender()
-    recommender.populate_user_ratings("data/ratings.csv")
-    recommender.populate_movie_names("data/movies.csv")
-    recommender.populate_links("data/links.csv")
-    recommender.initialise()
-    recommender.data_processing(0.1)
-    recommender.calc_similarity()
-    all_error = recommender.prediction_using_all_users()
+#if __name__ == '__main__':
+    #recommender = recommender()
+    #recommender.populate_user_ratings("data/ratings.csv")
+    #recommender.populate_movie_names("data/movies.csv")
+    #recommender.populate_links("data/links.csv")
+    #recommender.initialise()
+    #recommender.data_processing(0.1)
+    #recommender.calc_similarity()
+    #recommender.prediction_using_all_users()
     #recommender.prediction_using_finite_nearest_neighbours(50)
-    sample_neighbours_numbers = [5, 10, 25, 50, 100, 250]
-    errors = []
-    for _ in sample_neighbours_numbers:
-        error = recommender.prediction_using_finite_nearest_neighbours(_)
-        errors.append(error)
-    
-    sample_neighbours_numbers.append(recommender.num_users)
-    errors.append(all_error)
-    y_pos = np.arange(len(sample_neighbours_numbers))     
-    plt.bar(y_pos, errors, align='center', alpha=0.5)
-    plt.xticks(y_pos, sample_neighbours_numbers)
-    plt.ylabel('MSE')
-    plt.title('Testing MSEs with varied k values')
-     
-    plt.show()
-    plt.savefig("output.png")
-    #recommender.rating_recommender(1, 10)
-    print("Finished")
+    #recommender.create_imageURL_csv()
+    #print("Finished")

@@ -30,13 +30,13 @@ class Learner:
         self.clf=clf
     
     def scoring(self,X_train,y_train,pipe_lr):
-        kfold = StratifiedKFold(y=y_train, n_folds=3 , random_state=1)
+        kfold = StratifiedKFold(y=y_train, n_folds=4 , random_state=1)
         scores=[]
         for k, (train,test) in enumerate(kfold):
             pipe_lr.fit(X_train[train],y_train[train])
             score=pipe_lr.score(X_train[train],y_train[train])
             scores.append(score)
-            print('Fold %s,class dist %s, acc %.3f' % (k+1,np.bincount(y_train[train]),score))
+            print('Fold %s, acc %.3f' % (k+1,score))
     
         print("CROSS VALIDATION ACCURACY: %.3f +/- %.3f" % (np.mean(scores),np.std(scores)))
     
@@ -73,32 +73,32 @@ class Learner:
             clf = LogisticRegression()
             clf.fit(X_train, y_train)
             print("LogisticRegression")
-            print(clf.score(X_train,y_train))
-            print(clf.predict(X_test))
+            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("predictions: ",clf.predict(X_test))
         elif self.clf == "knn":
             clf = KNeighborsClassifier(n_neighbors=10)
             clf.fit(X_train, y_train)
             print("knn")
-            print(clf.score(X_train,y_train))
-            print(clf.predict(X_test))
+            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("predictions: ",clf.predict(X_test))
         elif self.clf == "svc":        
             clf = SVC(random_state=1)
             clf.fit(X_train, y_train)
             print("SVC")
-            print(clf.score(X_train,y_train))
-            print(clf.predict(X_test))
+            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("predictions: ",clf.predict(X_test))
         elif self.clf == "random forest":
             clf = RandomForestClassifier(n_estimators=500, random_state=0, n_jobs=1)
             clf.fit(X_train, y_train)
             print("Random Forest")
-            print(clf.score(X_train,y_train))
-            print(clf.predict(X_test))
+            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("predictions: ",clf.predict(X_test))
         elif self.clf == "Neural Nets":
             clf = MLPClassifier(solver='lbfgs', alpha = 1e-5 , hidden_layer_sizes=(20,2), random_state=1)
             clf.fit(X_train, y_train)
             print("neural nets")
-            print(clf.score(X_train,y_train))
-            print(clf.predict(X_test))
+            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Predictions: ",clf.predict(X_test))
     
     
     def pipeline_learning(self,X_train, X_test, y_train, y_test):
@@ -117,7 +117,7 @@ class Learner:
         elif self.clf == "random forest":
             print('RANDOM FOREST\n')
             #random = RandomForestClassifier(n_estimators=500, random_state=0, n_jobs=1))
-            pipe_lr= Pipeline([('clf',RandomForestClassifier(n_estimators=500, random_state=0, n_jobs=1))])
+            pipe_lr= Pipeline([('clf',RandomForestClassifier(n_estimators=100, random_state=0, n_jobs=1))])
             self.scoring(X_train,y_train,pipe_lr)
             
         elif self.clf == "regression":
@@ -178,20 +178,24 @@ class Learner:
     def find_similar_movies(self,movie_id, ratings, metric, k=4):
         similar=[]
         index=[]
+        ratings=ratings.T
+        movie_df = pd.read_csv('data/movies.csv')
+        genre = movie_df.pop('genres')
         model_knn = NearestNeighbors(metric = metric, algorithm = 'brute') 
         model_knn.fit(ratings)
         distances, index = model_knn.kneighbors(ratings.iloc[movie_id-1, :].values.reshape(1, -1), n_neighbors = k+1)
         similar = 1-distances.flatten()
-        print("%2d most similar movies for Movie %2d:\n"%(k,movie_id))
+        print("%2d most similar movies for Movie %s:\n"%(k,movie_df.loc[movie_df['movieId']==movie_id,'title'].iloc[0]))
         for i in range(0, len(index.flatten())):
             if index.flatten()[i]+1 == movie_id:
                 continue
             else:
-                print("%2d: Movie %2d, with similarity of %3.5f"%(i, index.flatten()[i]+1, similar.flatten()[i]))
+                movie_name=movie_df.loc[movie_df['movieId']==(index.flatten()[i]+1),'title'].iloc[0]
+                print("%2d: %s, with similarity of %3.5f"%(i,movie_name , similar.flatten()[i]))
         return similar,index
     
     
-    def predict_userbased_rating(self,user_id, movie_id, ratings, metric, k=10):
+    def predict_userbased_rating(self,user_id, movie_id, ratings, metric, k=4):
         prediction=0
         similar, index=self.find_similar_users(user_id, ratings,metric, k) #similar users based on cosine similarity
         mean_rating = ratings.loc[user_id-1,:].mean() #to adjust for zero based indexing
@@ -210,10 +214,10 @@ class Learner:
         print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
         return prediction
     
-    def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=10):
+    def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=4):
         prediction=0
         wtd_sum=0
-        similar, index=self.find_similar_movies(movie_id, ratings,metric) #similar users based on cosine similarity
+        similar, index=self.find_similar_movies(movie_id, ratings,metric,k) #similar users based on cosine similarity
         sum_wt = np.sum(similar)-1
         mean_rating = ratings.loc[:,movie_id-1].mean()
         product=1
@@ -229,10 +233,18 @@ class Learner:
         return prediction
     
 if __name__ == '__main__':
-    learner = Learner("neural nets")
-    X_train, X_test, y_train, y_test = learner.data_processing()
-    learner.classifier(X_train, X_test, y_train, y_test )
-    learner.pipeline_learning(X_train, X_test, y_train, y_test)
+    #different learners used are:remove the comment from clfs
+    print("Different classifiers running without k-fold validation and with 4-fold validation")
+    #clfs = ['knn','neural nets', 'random forest', 'regression', 'svc'] 
+    clfs = ['knn']
+    for clf in clfs:
+        learner = Learner(clf)
+        X_train, X_test, y_train, y_test = learner.data_processing()
+        learner.classifier(X_train, X_test, y_train, y_test )
+        learner.pipeline_learning(X_train, X_test, y_train, y_test)
+        
+   
+    print('~~~~~~~~~~~~xx~~~~~~~~~~~~~~~')
     rating_matrix,user_similarity = learner.create_similarity_matrix()
     #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)
@@ -240,6 +252,9 @@ if __name__ == '__main__':
     user_id = int(input("Enter the user id: "))
     #similar,index = learner.find_similar_users(user_id,rating_matrix, metric='cosine') #use correlation insteaf of cosine
     movie_id = int(input("Enter the movie_id: "))
+    print('\n')
+    print("USER BASED SIMILARITY\n")
     prediction_userbased = learner.predict_userbased_rating(user_id,movie_id,rating_matrix, metric ='cosine')
     #similar,index = learner.find_similar_movies(movie_id,rating_matrix,metric='cosine')
+    print("ITEM BASED SIMILARITY\n")
     prediction_moviebased = learner.predict_moviebased_rating(user_id,movie_id,rating_matrix, metric ='cosine')
