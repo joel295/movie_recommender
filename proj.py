@@ -191,7 +191,7 @@ class Learner:
         return similar,index
     
     
-    def predict_userbased_rating(self,user_id, movie_id, ratings, metric, k=4):
+    def predict_userbased_rating(self,user_id, movie_id, ratings, metric, k=10):
         prediction=0
         similar, index=self.find_similar_users(user_id, ratings,metric, k) #similar users based on cosine similarity
         mean_rating = ratings.loc[user_id-1,:].mean() #to adjust for zero based indexing
@@ -210,7 +210,7 @@ class Learner:
         print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
         return prediction
     
-    def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=4):
+    def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=10):
         prediction=0
         wtd_sum=0
         similar, index=self.find_similar_movies(movie_id, ratings,metric) #similar users based on cosine similarity
@@ -229,10 +229,10 @@ class Learner:
         return prediction
     
 if __name__ == '__main__':
-    learner = Learner("knn")
+    learner = Learner("neural nets")
     X_train, X_test, y_train, y_test = learner.data_processing()
-    #learner.classifier(X_train, X_test, y_train, y_test )
-    #learner.pipeline_learning(X_train, X_test, y_train, y_test)
+    learner.classifier(X_train, X_test, y_train, y_test )
+    learner.pipeline_learning(X_train, X_test, y_train, y_test)
     rating_matrix,user_similarity = learner.create_similarity_matrix()
     #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)

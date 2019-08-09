@@ -1,4 +1,4 @@
-# Movie Recommender System
+﻿# Movie Recommender System
 
 This project provides a recommender system using Collaborative Filtering via Cosine Similarity
 
@@ -6,9 +6,12 @@ This project provides a recommender system using Collaborative Filtering via Cos
 The goals of this project are:
 * Test various Machine Learning approaches for suitability for use as a recommender
 * Implement user derived Collaboritive Filtering to predict users’ ratings on movies using all users.
+* Implement item derived Collaboritive Filtering to predict users’ ratings on movies using all items.
+* Predict the k most similar movies and users according to each movie and user.
 * Improve the user derived approach using only top-K most similar user ratings.
 * Prove that Collaboritive Filtering is a simple but effectice means of for recommending in a memory-based context.
 * Show that using top-K users vs overall is more accurate.
+
 
 ### Running the code
 
