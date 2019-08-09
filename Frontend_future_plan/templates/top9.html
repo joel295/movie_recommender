@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Top 9 Movies for User: {{ user_id }} {% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 text-center">
+            <h4>Top 9 Movies for User {{ user_id }} </h4>        
+            <table class="table table-bordered table-hover">
+                    <tbody>
+                      <tr>
+                        {% for url in url1 %}
+                        <td>{{ url }}</td>
+                        {% endfor %}
+                      </tr>
+                      <tr>
+                        <!--<th scope="row">{{ user }}</th>-->
+                        {% for url in url2 %}
+                        <td>{{ url }}</td>
+                        {% endfor %}
+                      </tr>
+                      <tr>
+                        {% for url in url3 %}
+                        <td>{{ url }}</td>
+                        {% endfor %}
+                      </tr>
+
+            </table>      
+    </div>
+</div>
+{% endblock %}
