@@ -132,8 +132,6 @@ class Learner:
     
     def create_similarity_matrix(self):
         rr = pd.read_csv('data/ratings.csv')
-        #print(rr)
-        #rr.describe()
         x = 610
         y =193609
         rating1=np.zeros((x,y))
@@ -146,18 +144,14 @@ class Learner:
         size=x*y
         sparse = how_sparse/size
         test_item = math.floor(0.1*sparse*y)
-        #print(test_item)
         train_set = rating1.copy()
         test_set = np.zeros((x,y))
         for uid in range(x):
                 item = np.random.choice(rating1[uid, :].nonzero()[0], size=test_item, replace=False)
-                #print(item)
                 test_set[uid, item] = rating1[uid, item] #add to the test_set
                 train_set[uid, item] = 0
                 
-        #print("Data has been processed.")
         user_sim = cos_sim(train_set)
-        #print(user_sim)
         return rating1,user_sim      
 
     def pair_wise_distances(self,rating_matrix):
@@ -165,7 +159,7 @@ class Learner:
         pearson_similarity  = 1-pairwise_distances(rating_matrix, metric = "correlation")
         #print(pearson_similarity)
         
-    def findksimilarusers(self,user_id, ratings, metric, k=4):
+    def find_similar_users(self,user_id, ratings, metric, k=4):
         similar=[]
         index=[]
         model_knn = NearestNeighbors(metric = metric, algorithm = 'brute') 
@@ -181,9 +175,25 @@ class Learner:
         return similar,index
     
     
-    def predict_user_rating(self,user_id, item_id, ratings, metric, k=4):
+    def find_similar_movies(self,movie_id, ratings, metric, k=4):
+        similar=[]
+        index=[]
+        model_knn = NearestNeighbors(metric = metric, algorithm = 'brute') 
+        model_knn.fit(ratings)
+        distances, index = model_knn.kneighbors(ratings.iloc[movie_id-1, :].values.reshape(1, -1), n_neighbors = k+1)
+        similar = 1-distances.flatten()
+        print("%2d most similar movies for Movie %2d:\n"%(k,movie_id))
+        for i in range(0, len(index.flatten())):
+            if index.flatten()[i]+1 == movie_id:
+                continue
+            else:
+                print("%2d: Movie %2d, with similarity of %3.5f"%(i, index.flatten()[i]+1, similar.flatten()[i]))
+        return similar,index
+    
+    
+    def predict_userbased_rating(self,user_id, movie_id, ratings, metric, k=4):
         prediction=0
-        similar, index=self.findksimilarusers(user_id, ratings,metric, k) #similar users based on cosine similarity
+        similar, index=self.find_similar_users(user_id, ratings,metric, k) #similar users based on cosine similarity
         mean_rating = ratings.loc[user_id-1,:].mean() #to adjust for zero based indexing
         sum_wt = np.sum(similar)-1
         product=1
@@ -192,25 +202,44 @@ class Learner:
             if index.flatten()[i]+1 == user_id:
                 continue
             else: 
-                ratings_diff = ratings.iloc[index.flatten()[i],item_id-1]-np.mean(ratings.iloc[index.flatten()[i],:])
+                ratings_diff = ratings.iloc[index.flatten()[i],movie_id-1]-np.mean(ratings.iloc[index.flatten()[i],:])
                 product = ratings_diff * (similar[i])
                 wtd_sum = wtd_sum + product
         
         prediction = int(round(mean_rating + (wtd_sum/sum_wt)))
-        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,item_id,prediction))
+        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
         return prediction
-            
+    
+    def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=4):
+        prediction=0
+        wtd_sum=0
+        similar, index=self.find_similar_movies(movie_id, ratings,metric) #similar users based on cosine similarity
+        sum_wt = np.sum(similar)-1
+        mean_rating = ratings.loc[:,movie_id-1].mean()
+        product=1
+        for i in range(0, len(index.flatten())):
+            if index.flatten()[i]+1 == movie_id:
+                continue
+            else: 
+                product =  ratings.iloc[user_id-1,index.flatten()[i]] * (similar[i])
+                wtd_sum = wtd_sum + product
+                
+        prediction = int(round(mean_rating+(wtd_sum/sum_wt)))
+        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
+        return prediction
+    
 if __name__ == '__main__':
     learner = Learner("knn")
     X_train, X_test, y_train, y_test = learner.data_processing()
-    learner.classifier(X_train, X_test, y_train, y_test )
-    learner.pipeline_learning(X_train, X_test, y_train, y_test)
+    #learner.classifier(X_train, X_test, y_train, y_test )
+    #learner.pipeline_learning(X_train, X_test, y_train, y_test)
     rating_matrix,user_similarity = learner.create_similarity_matrix()
     #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)
     #print(rating_matrix)
     user_id = int(input("Enter the user id: "))
-    #similar,index = learner.findksimilarusers(user_id,rating_matrix, metric='cosine') #use correlation insteaf of cosine
-    item_id = int(input("Enter the movie_id: "))
-    prediction = learner.predict_user_rating(user_id,item_id,rating_matrix, metric ='cosine')
-    
+    #similar,index = learner.find_similar_users(user_id,rating_matrix, metric='cosine') #use correlation insteaf of cosine
+    movie_id = int(input("Enter the movie_id: "))
+    prediction_userbased = learner.predict_userbased_rating(user_id,movie_id,rating_matrix, metric ='cosine')
+    #similar,index = learner.find_similar_movies(movie_id,rating_matrix,metric='cosine')
+    prediction_moviebased = learner.predict_moviebased_rating(user_id,movie_id,rating_matrix, metric ='cosine')
