@@ -23,6 +23,8 @@ from sklearn.metrics import pairwise_distances
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import correlation, cosine
+from sklearn.linear_model import SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 
 
@@ -81,7 +83,7 @@ class Learner:
             clf = LogisticRegression()
             clf.fit(X_train, y_train)
             print("LogisticRegression")
-            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Training accuracy: ",clf.score(X_train,y_train)*100)
             #print("predictions: ",clf.predict(X_test))
 
         # KNN classifier
@@ -92,7 +94,7 @@ class Learner:
             clf = KNeighborsClassifier(n_neighbors=10)
             clf.fit(X_train, y_train)
             print("knn")
-            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Training accuracy: ",clf.score(X_train,y_train)*100)
             #print("predictions: ",clf.predict(X_test))
 
         # SVC classifier
@@ -100,10 +102,10 @@ class Learner:
         # Output the predictions it predicts
         # Low Accuracy due to lack of features
         elif self.clf == "svc":        
-            clf = SVC(random_state=1)
+            clf = SVC()
             clf.fit(X_train, y_train)
             print("SVC")
-            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Training accuracy: ",clf.score(X_train,y_train)*100)
             #print("predictions: ",clf.predict(X_test))
 
         # Random Forest classifier
@@ -115,7 +117,7 @@ class Learner:
             clf = RandomForestClassifier(n_estimators=500, random_state=0, n_jobs=1)
             clf.fit(X_train, y_train)
             print("Random Forest")
-            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Training accuracy: ",round(clf.score(X_train,y_train)*100,2))
             #print("predictions: ",clf.predict(X_test))
 
         # Neural Nets 
@@ -127,8 +129,29 @@ class Learner:
             clf = MLPClassifier(solver='lbfgs', alpha = 1e-5 , hidden_layer_sizes=(20,2), random_state=1)
             clf.fit(X_train, y_train)
             print("neural nets")
-            print("Training accuracy: ",clf.score(X_train,y_train))
+            print("Training accuracy: ",clf.score(X_train,y_train)*100)
             #print("Predictions: ",clf.predict(X_test))
+            
+        elif self.clf == "gnb":
+            gaussian = GaussianNB()
+            gaussian.fit(X_train, y_train)
+            #Y_pred = gaussian.predict(X_test)
+            acc_gaussian = round(gaussian.score(X_train, y_train) * 100, 2)
+            print("Training accuracy: ",acc_gaussian)
+        
+        elif self.clf == "dtree":
+            decision_tree = DecisionTreeClassifier()
+            decision_tree.fit(X_train, y_train)
+            #Y_pred = decision_tree.predict(test)
+            accuracy = round(decision_tree.score(X_train, y_train) * 100, 2)
+            print("Training accuracy: ",accuracy)
+            
+        elif self.clf == "sgd":
+            sgd = SGDClassifier()
+            sgd.fit(X_train, y_train)
+            accuracy = round(sgd.score(X_train, y_train) * 100, 2)
+            print("Training accuracy: ",accuracy)
+
     
     
     def pipeline_learning(self,X_train, X_test, y_train, y_test):
@@ -302,14 +325,14 @@ class Learner:
 if __name__ == '__main__':
     #different learners used are:remove the comment from clfs
     print("Different classifiers running without k-fold validation and with 4-fold validation")
-    clfs = ['knn','neural nets', 'random forest', 'regression'] 
+    clfs = ['knn','neural nets', 'random forest', 'regression', 'gnb' , 'dtree' , 'sgd'] 
     #clfs = ['knn']
     
     for clf in clfs: #clfs store the name of all the classifiers tested, but currently it is set to knn
         learner = Learner(clf)
         X_train, X_test, y_train, y_test = learner.data_processing()
         learner.classifier(X_train, X_test, y_train, y_test )
-        learner.pipeline_learning(X_train, X_test, y_train, y_test)
+        #learner.pipeline_learning(X_train, X_test, y_train, y_test)
     
     #learner = Learner('knn')
     print('~~~~~~~~~~~~xx~~~~~~~~~~~~~~~')

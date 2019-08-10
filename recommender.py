@@ -12,7 +12,6 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity as cos_sim
 from sklearn.metrics import mean_squared_error as mse
 import math, requests, json, shutil
-import matplotlib.pyplot as plt
 
 class recommender:
     def __init__(self):
@@ -87,9 +86,7 @@ class recommender:
 
     def prediction_using_finite_nearest_neighbours(self, num_neighbours):
         prediction_matrix = np.zeros(self.testing_set.shape)
-        number = len(range(self.user_similarity.shape[0]))
         for user in range(self.user_similarity.shape[0]):
-            print(f'Iteration {user} of {number}.')
             # exclude the get the top num_neighbours users' indexes other than user itself        
             index_top_neighbour = [np.argsort(self.user_similarity[:,user])[-2:-num_neighbours-2:-1]]
             
@@ -164,27 +161,15 @@ class recommender:
                     print("100 down")
         return
 
-if __name__ == '__main__':
-    recommender = recommender()
-    recommender.populate_user_ratings("data/ratings.csv")
-    recommender.populate_movie_names("data/movies.csv")
-    recommender.populate_links("data/links.csv")
-    recommender.initialise()
-    recommender.data_processing(0.1)
-    recommender.calc_similarity()
-    all_error = recommender.prediction_using_all_users()
-    sample_neighbours_numbers = [25, 30, 35, 40, 45, 50]
-    errors = []
-    for _ in sample_neighbours_numbers:
-        error = recommender.prediction_using_finite_nearest_neighbours(_)
-        errors.append(error)
-
-    sample_neighbours_numbers.append(recommender.num_users)
-    errors.append(all_error)
-    y_pos = np.arange(len(sample_neighbours_numbers))     
-    plt.bar(y_pos, errors, align='center', alpha=0.5)
-    plt.xticks(y_pos, sample_neighbours_numbers)
-    plt.ylabel('MSE')
-    plt.title('Testing MSEs with varied k values')
-    plt.savefig("output.png")
-    plt.show()
+#if __name__ == '__main__':
+    #recommender = recommender()
+    #recommender.populate_user_ratings("data/ratings.csv")
+    #recommender.populate_movie_names("data/movies.csv")
+    #recommender.populate_links("data/links.csv")
+    #recommender.initialise()
+    #recommender.data_processing(0.1)
+    #recommender.calc_similarity()
+    #recommender.prediction_using_all_users()
+    #recommender.prediction_using_finite_nearest_neighbours(50)
+    #recommender.create_imageURL_csv()
+    #print("Finished")
