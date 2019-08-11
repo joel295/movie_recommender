@@ -105,7 +105,7 @@ class Learner:
             clf = SVC()
             clf.fit(X_train, y_train)
             print("SVC")
-            print("Training accuracy: ",clf.score(X_train,y_train)*100)
+            print("Training accuracy: ",round(clf.score(X_train,y_train)*100,2))
             #print("predictions: ",clf.predict(X_test))
 
         # Random Forest classifier
@@ -125,11 +125,11 @@ class Learner:
         # Output the predictions it predicts
         # Low Accuracy due to lack of features
 
-        elif self.clf == "Neural Nets":
-            clf = MLPClassifier(solver='lbfgs', alpha = 1e-5 , hidden_layer_sizes=(20,2), random_state=1)
+        elif self.clf == "neural nets":
+            clf = MLPClassifier(solver='lbfgs', alpha = 1e-5 , hidden_layer_sizes=(10,5), random_state=1)
             clf.fit(X_train, y_train)
             print("neural nets")
-            print("Training accuracy: ",clf.score(X_train,y_train)*100)
+            print("Training accuracy: ",round(clf.score(X_train,y_train)*100,2))
             #print("Predictions: ",clf.predict(X_test))
             
         elif self.clf == "gnb":
@@ -137,6 +137,7 @@ class Learner:
             gaussian.fit(X_train, y_train)
             #Y_pred = gaussian.predict(X_test)
             acc_gaussian = round(gaussian.score(X_train, y_train) * 100, 2)
+            print("gaussian NB\n")
             print("Training accuracy: ",acc_gaussian)
         
         elif self.clf == "dtree":
@@ -144,12 +145,14 @@ class Learner:
             decision_tree.fit(X_train, y_train)
             #Y_pred = decision_tree.predict(test)
             accuracy = round(decision_tree.score(X_train, y_train) * 100, 2)
+            print("Decision Tree\n")
             print("Training accuracy: ",accuracy)
             
         elif self.clf == "sgd":
             sgd = SGDClassifier()
             sgd.fit(X_train, y_train)
             accuracy = round(sgd.score(X_train, y_train) * 100, 2)
+            print("Stochastic Gradient Descent")
             print("Training accuracy: ",accuracy)
 
     
@@ -168,7 +171,7 @@ class Learner:
             
         elif self.clf == "neural nets":
             print("Neural Nets")
-            pipe_lr= Pipeline([('clf',MLPClassifier(solver='adam', alpha = 1e-5 , hidden_layer_sizes=(20,2), random_state=1))])
+            pipe_lr= Pipeline([('clf',MLPClassifier(solver='lbfgs', alpha = 1e-5 , hidden_layer_sizes=(10,5), random_state=1))])
             self.scoring(X_train,y_train,pipe_lr)
             
             
@@ -188,6 +191,22 @@ class Learner:
             pipe_svc = Pipeline([('clf',SVC(random_state=1))])
             self.scoring(X_train,y_train,pipe_svc)
     
+        elif self.clf == "gnb":
+            pipe_lr= Pipeline([('clf',GaussianNB())])
+            print("gaussian NB\n")
+            self.scoring(X_train,y_train,pipe_lr)
+
+        
+        elif self.clf == "dtree":
+            pipe_lr= Pipeline([('clf',DecisionTreeClassifier())])
+            print("Decision Tree\n")
+            self.scoring(X_train,y_train,pipe_lr)
+ 
+        elif self.clf == "sgd":
+            pipe_lr= Pipeline([('clf',SGDClassifier())])
+            print("Stochastic Gradient Descent")
+            self.scoring(X_train,y_train,pipe_lr)
+
 
 
     def create_similarity_matrix(self):
@@ -225,13 +244,12 @@ class Learner:
         model_knn.fit(ratings) #fit ratings ( user_id x movie_id)
         distances, index = model_knn.kneighbors(ratings.iloc[user_id-1, :].values.reshape(1, -1), n_neighbors = k+1) #find the distances
         similar = 1-distances.flatten() #find similar users
-        #print("%2d most similar users for User %2d:\n"%(k,user_id))
+        print("%2d most similar users for User %2d:\n"%(k,user_id))
         for i in range(0, len(index.flatten())):
             if index.flatten()[i]+1 == user_id:
                 continue
             else:
-                #print("%2d: User %2d, with similarity of %3.5f"%(i, index.flatten()[i]+1, similar.flatten()[i]))
-                continue
+                print("%2d: User %2d, with similarity of %3.5f"%(i, index.flatten()[i]+1, similar.flatten()[i]))
         return similar,index
     
     
@@ -245,14 +263,21 @@ class Learner:
         model_knn.fit(ratings) # fit the rating matrix
         distances, index = model_knn.kneighbors(ratings.iloc[movie_id-1, :].values.reshape(1, -1), n_neighbors = k+1)
         similar = 1-distances.flatten() #find similar movies
-        #print("%2d most similar movies for Movie %s:\n"%(k,movie_df.loc[movie_df['movieId']==movie_id,'title'].iloc[0])) #print the movie name
+        if any(movie_df.movieId == movie_id):
+            movie_nam = movie_df.loc[movie_df['movieId']==movie_id,'title'].iloc[0]
+        else:
+            #print("movie_id doesnt exist in the database\n")
+            movie_nam = str(movie_id)
+        print("%2d most similar movies for Movie %s:\n"%(k,movie_nam)) #print the movie name
         for i in range(0, len(index.flatten())):
             if index.flatten()[i]+1 == movie_id:
                 continue
             else:
-                movie_name=movie_df.loc[movie_df['movieId']==(index.flatten()[i]+1),'title'].iloc[0]
-                continue
-                #print("%2d: %s, with similarity of %3.5f"%(i,movie_name , similar.flatten()[i])) #print the similar movie names
+                if any(movie_df.movieId == index.flatten()[i]+1):
+                    movie_name=movie_df.loc[movie_df['movieId']==(index.flatten()[i]+1),'title'].iloc[0]
+                else:
+                    movie_name = index.flatten()[i]+1
+                print("%2d: %s, with similarity of %3.5f"%(i, movie_name , similar.flatten()[i])) #print the similar movie names
         return similar,index
     
     
@@ -272,7 +297,7 @@ class Learner:
                 wtd_sum = wtd_sum + product #update wt
         
         prediction = int(round(mean_rating + (wtd_sum/sum_wt)))
-        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
+        print('\nPredicted rating for user %2d -> movie %2d: %2d'%(user_id,movie_id,prediction))
         return prediction
     
     def predict_moviebased_rating(self,user_id, movie_id, ratings, metric, k=4):
@@ -290,7 +315,7 @@ class Learner:
                 wtd_sum = wtd_sum + product
                 
         prediction = int(round((wtd_sum/sum_wt)))
-        print('\nPredicted rating for user %2d -> item %2d: %2d'%(user_id,movie_id,prediction))
+        print('\nPredicted rating for user %2d -> movie %2d: %2d'%(user_id,movie_id,prediction))
         return prediction
     
     
@@ -325,30 +350,25 @@ class Learner:
 if __name__ == '__main__':
     #different learners used are:remove the comment from clfs
     print("Different classifiers running without k-fold validation and with 4-fold validation")
-    clfs = ['knn','neural nets', 'random forest', 'regression', 'gnb' , 'dtree' , 'sgd'] 
-    #clfs = ['knn']
+    #clfs = ['knn','neural nets', 'random forest', 'regression', 'gnb' , 'dtree' , 'sgd'] 
+    clfs = ['knn']
     
     for clf in clfs: #clfs store the name of all the classifiers tested, but currently it is set to knn
         learner = Learner(clf)
         X_train, X_test, y_train, y_test = learner.data_processing()
         learner.classifier(X_train, X_test, y_train, y_test )
-        #learner.pipeline_learning(X_train, X_test, y_train, y_test)
+        learner.pipeline_learning(X_train, X_test, y_train, y_test)
     
     #learner = Learner('knn')
     print('~~~~~~~~~~~~xx~~~~~~~~~~~~~~~')
     rating_matrix,user_similarity = learner.create_similarity_matrix()
-    #learner.pair_wise_distances(rating_matrix)
     rating_matrix = pd.DataFrame(rating_matrix)
-    #print(rating_matrix)
     user_id = int(input("Enter the user id: "))
-    #similar,index = learner.find_similar_users(user_id,rating_matrix, metric='cosine') #use correlation insteaf of cosine
     movie_id = int(input("Enter the movie_id: "))
-    
     metric = input("Enter the metric - cosine or correlation: ")
     print('\n')
     print("USER BASED SIMILARITY\n")
     prediction_userbased = learner.predict_userbased_rating(user_id,movie_id,rating_matrix, metric = metric)
-    #similar,index = learner.find_similar_movies(movie_id,rating_matrix,metric='cosine')
     print("ITEM BASED SIMILARITY\n")
     prediction_moviebased = learner.predict_moviebased_rating(user_id,movie_id,rating_matrix, metric = metric)
     #eval = learner.RMSE(rating_matrix, metric)
