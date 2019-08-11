@@ -350,8 +350,8 @@ class Learner:
 if __name__ == '__main__':
     #different learners used are:remove the comment from clfs
     print("Different classifiers running without k-fold validation and with 4-fold validation")
-    #clfs = ['knn','neural nets', 'random forest', 'regression', 'gnb' , 'dtree' , 'sgd'] 
-    clfs = ['knn']
+    clfs = ['knn','neural nets', 'random forest', 'regression', 'gnb' , 'dtree' , 'sgd'] 
+    #clfs = ['knn']
     
     for clf in clfs: #clfs store the name of all the classifiers tested, but currently it is set to knn
         learner = Learner(clf)
@@ -359,7 +359,6 @@ if __name__ == '__main__':
         learner.classifier(X_train, X_test, y_train, y_test )
         learner.pipeline_learning(X_train, X_test, y_train, y_test)
     
-    #learner = Learner('knn')
     print('~~~~~~~~~~~~xx~~~~~~~~~~~~~~~')
     rating_matrix,user_similarity = learner.create_similarity_matrix()
     rating_matrix = pd.DataFrame(rating_matrix)
