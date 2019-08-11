@@ -27,11 +27,19 @@ $ python3 proj.py
 
 ## Built With - Prerequisites
 
+recommender.py written with:
 * [python3](https://www.python.org/) - v3.7
-* [scikit-learn](https://scikit-learn.org/) - v
-* [matplotlib](https://matplotlib.org/) - v
-* [numpy](https://www.numpy.org/) - v
-* [pandas](https://pandas.pydata.org/) - v
+* [scikit-learn](https://scikit-learn.org/) - v0.21.3
+* [matplotlib](https://matplotlib.org/) - v3.1.1
+* [numpy](https://www.numpy.org/) - v1.17.0
+* [pandas](https://pandas.pydata.org/) - v0.25.0
+
+proj.py written with:
+* [python3](https://www.python.org/) - v3.7
+* [scikit-learn](https://scikit-learn.org/) - v0.15.2
+* [numpy](https://www.numpy.org/) - v1.17.0
+* [pandas](https://pandas.pydata.org/) - v0.15.2
+* [SciPy](https://www.scipy.org/) - 0.14.0
 
 
 ## Authors
